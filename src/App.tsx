@@ -256,7 +256,7 @@ function AiBar() {
           <ArrowUpRight size={13} className="text-black" />
         </button>
       </div>
-      <div className="flex items-center gap-2 px-5 pb-4 flex-wrap">
+      <div className="flex items-center gap-2 px-5 pb-4 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
         {[
           "Who’s overloaded right now?",
           "Summarize overdue matters",
@@ -265,7 +265,7 @@ function AiBar() {
           "Show revenue vs last month",
         ].map((prompt, i) => (
           <button key={i}
-            className="bg-white border border-[#e5e5e5] rounded-full px-3.5 py-1.5 text-[13px] text-[#737373] hover:bg-neutral-50 hover:border-neutral-300 transition-colors"
+            className="bg-white border border-[#e5e5e5] rounded-full px-3.5 py-2 text-[13px] text-[#737373] hover:bg-neutral-50 hover:border-neutral-300 transition-colors whitespace-nowrap shrink-0"
             style={{ fontFamily: SF }}>
             {prompt}
           </button>
@@ -337,7 +337,49 @@ function NeedsAttention({ filter, setFilter }: { filter: string; setFilter: (f: 
         </button>
       </div>
 
-      <div className="overflow-auto" style={{ maxHeight: "390px" }}>
+      {/* Mobile: card list */}
+      <div className="lg:hidden divide-y divide-[#e9eaeb] overflow-y-auto" style={{ maxHeight: "420px" }}>
+        {rows.map((m) => {
+          const showFollowUp = m.status === "Over Due" || m.status === "At Risk" || m.status === "Pending Info";
+          return (
+            <div key={m.id} className="px-4 py-3 flex flex-col gap-2">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-[13px] text-black leading-tight" style={{ fontFamily: SFB }}>{m.title}</p>
+                  <p className="text-[11px] text-[#a3a3a3] mt-0.5" style={{ fontFamily: SF }}>{m.company}</p>
+                </div>
+                <Badge label={m.status} />
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[12px] text-black" style={{ fontFamily: SFM }}>{m.value}</span>
+                <span className="text-[#d4d4d4] text-[10px]">•</span>
+                <span className="text-[12px] text-[#737373]" style={{ fontFamily: SF }}>Due {m.due}</span>
+                <span className="text-[#d4d4d4] text-[10px]">•</span>
+                {m.assignee ? (
+                  <div className="flex items-center gap-1.5">
+                    <Av src={m.img} name={m.assignee} size={18} imgStyle={{ height: 18 }} />
+                    <span className="text-[12px] text-[#737373]" style={{ fontFamily: SF }}>{m.assignee}</span>
+                  </div>
+                ) : (
+                  <button className="flex items-center gap-1 text-[11px] text-[#737373] bg-[#f5f5f5] border border-[#e9eaeb] rounded-md px-2 py-0.5" style={{ fontFamily: SF }}>
+                    <UserPlus size={10} /> Assign
+                  </button>
+                )}
+              </div>
+              {showFollowUp && (
+                <div>
+                  <button className="flex items-center gap-1.5 text-[12px] text-black border border-[#e9eaeb] rounded-lg px-4 py-3 hover:bg-black hover:text-white hover:border-black transition-colors" style={{ fontFamily: SFM }}>
+                    <ArrowUpRight size={12} className="shrink-0" />Follow Up
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop: table */}
+      <div className="hidden lg:block overflow-auto" style={{ maxHeight: "390px" }}>
         <table className="w-full table-fixed">
           <colgroup>
             <col style={{ width: "30%" }} />
@@ -375,17 +417,15 @@ function NeedsAttention({ filter, setFilter }: { filter: string; setFilter: (f: 
                       </div>
                     ) : (
                       <button className="flex items-center gap-1.5 text-[12px] text-[#737373] hover:text-black transition-colors bg-[#f5f5f5] border border-[#e9eaeb] rounded-lg px-2 py-1" style={{ fontFamily: SF }}>
-                        <UserPlus size={11} />
-                        Assign Lawyer
+                        <UserPlus size={11} />Assign Lawyer
                       </button>
                     )}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
                     <div className="flex items-center gap-1.5">
                       {needsFollowUp || m.status === "Pending Info" ? (
-                        <button className="flex items-center gap-1.5 text-[12px] text-black border border-[#e9eaeb] rounded-lg px-2.5 py-1.5 hover:bg-[#f5f5f5] transition-colors" style={{ fontFamily: SFM }}>
-                          <ArrowUpRight size={12} className="shrink-0" />
-                          Follow Up
+                        <button className="flex items-center gap-1.5 text-[12px] text-black border border-[#e9eaeb] rounded-lg px-2.5 py-1.5 hover:bg-black hover:text-white hover:border-black transition-colors" style={{ fontFamily: SFM }}>
+                          <ArrowUpRight size={12} className="shrink-0" />Follow Up
                         </button>
                       ) : null}
                       <button className="opacity-0 group-hover:opacity-100 transition-opacity text-[#a3a3a3] hover:text-black p-1 rounded-md hover:bg-[#f5f5f5]">
@@ -604,8 +644,54 @@ function FinanceTab() {
           </button>
         </div>
 
-        {/* Finance table */}
-        <div className="overflow-auto" style={{ maxHeight: "360px" }}>
+        {/* Mobile: card list */}
+        <div className="lg:hidden divide-y divide-[#e9eaeb] overflow-y-auto" style={{ maxHeight: "420px" }}>
+          {filteredRows.map((row) => (
+            <div key={row.id} className="px-4 py-3 flex flex-col gap-2">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-start gap-2 min-w-0">
+                  <div className="mt-1.5 shrink-0 w-2 h-2 rounded-full" style={{ background: row.type === "invoice" ? "#16a34a" : "#dc2626" }} />
+                  <div className="min-w-0">
+                    <p className="text-[13px] text-black leading-tight" style={{ fontFamily: SFM }}>{row.matter}</p>
+                    <p className="text-[11px] text-[#a3a3a3] mt-0.5" style={{ fontFamily: SF }}>{row.ref}</p>
+                  </div>
+                </div>
+                <FinStatusBadge status={row.status} label={row.statusLabel} />
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-1.5">
+                  {row.partyImg
+                    ? <img src={row.partyImg} alt={row.partyName} className="rounded-full object-cover shrink-0" width={18} height={18} style={{ height: 18 }} />
+                    : <div className="w-[18px] h-[18px] rounded-full bg-neutral-100 flex items-center justify-center text-[10px] shrink-0">{row.partyName[0]}</div>
+                  }
+                  <span className="text-[12px] text-[#737373]" style={{ fontFamily: SF }}>{row.partyName}</span>
+                </div>
+                <span className="text-[#d4d4d4] text-[10px]">•</span>
+                <span className="text-[12px] text-black" style={{ fontFamily: SFM }}>{row.value}</span>
+                <span className="text-[#d4d4d4] text-[10px]">•</span>
+                <span className="text-[12px] text-[#737373]" style={{ fontFamily: SF }}>{row.dueOn}</span>
+              </div>
+              <div>
+                {row.status === "pending" ? (
+                  <button className="flex items-center gap-2 text-black border border-[#e9eaeb] rounded-lg px-4 py-3 hover:bg-black hover:text-white hover:border-black transition-colors group/btn" style={{ fontFamily: SFM }}>
+                    <svg width="9" height="6.5" viewBox="0 0 8.99992 6.49992" fill="none" className="shrink-0">
+                      <path d="M8.14645 0.146447C8.34171 -0.0488156 8.65821 -0.0488154 8.85348 0.146447C9.04874 0.341709 9.04874 0.658216 8.85348 0.853478L3.35348 6.35348C3.15822 6.54874 2.84171 6.54874 2.64645 6.35348L0.146447 3.85348C-0.0488155 3.65822 -0.0488155 3.34171 0.146447 3.14645C0.341709 2.95118 0.658216 2.95118 0.853478 3.14645L2.99996 5.29293L8.14645 0.146447Z" className="fill-black group-hover/btn:fill-white" />
+                    </svg>
+                    <span className="text-[13px]" style={{ fontVariationSettings: '"wdth" 100' }}>Approve</span>
+                  </button>
+                ) : (
+                  <button className="flex items-center gap-2 text-black border border-[#e9eaeb] rounded-lg px-4 py-3 hover:bg-black hover:text-white hover:border-black transition-colors" style={{ fontFamily: SFM }}>
+                    <ArrowUpRight size={13} className="shrink-0" />
+                    <span className="text-[13px]">Follow Up</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop: table */}
+        <div className="hidden lg:block overflow-auto" style={{ maxHeight: "360px" }}>
           <table className="w-full table-fixed">
             <colgroup>
               <col style={{ width: "28%" }} />
@@ -651,16 +737,15 @@ function FinanceTab() {
                   <td className="px-4 py-3 whitespace-nowrap">
                     <div className="flex items-center gap-1.5">
                       {row.status === "pending" ? (
-                        <button className="flex items-center gap-[6px] text-black bg-white border border-[#e9eaeb] rounded-[8px] px-[10px] py-[6px] hover:bg-[#f5f5f5] transition-colors shrink-0">
+                        <button className="flex items-center gap-[6px] text-black bg-white border border-[#e9eaeb] rounded-[8px] px-[10px] py-[6px] hover:bg-black hover:text-white hover:border-black transition-colors shrink-0 group/btn">
                           <svg width="9" height="6.5" viewBox="0 0 8.99992 6.49992" fill="none" className="shrink-0">
-                            <path d="M8.14645 0.146447C8.34171 -0.0488156 8.65821 -0.0488154 8.85348 0.146447C9.04874 0.341709 9.04874 0.658216 8.85348 0.853478L3.35348 6.35348C3.15822 6.54874 2.84171 6.54874 2.64645 6.35348L0.146447 3.85348C-0.0488155 3.65822 -0.0488155 3.34171 0.146447 3.14645C0.341709 2.95118 0.658216 2.95118 0.853478 3.14645L2.99996 5.29293L8.14645 0.146447Z" fill="black" />
+                            <path d="M8.14645 0.146447C8.34171 -0.0488156 8.65821 -0.0488154 8.85348 0.146447C9.04874 0.341709 9.04874 0.658216 8.85348 0.853478L3.35348 6.35348C3.15822 6.54874 2.84171 6.54874 2.64645 6.35348L0.146447 3.85348C-0.0488155 3.65822 -0.0488155 3.34171 0.146447 3.14645C0.341709 2.95118 0.658216 2.95118 0.853478 3.14645L2.99996 5.29293L8.14645 0.146447Z" className="fill-black group-hover/btn:fill-white" />
                           </svg>
                           <span className="text-[12px] leading-[18px] whitespace-nowrap" style={{ fontFamily: SFM, fontVariationSettings: '"wdth" 100' }}>Approve</span>
                         </button>
                       ) : (
-                        <button className="flex items-center gap-1 text-[12px] text-black bg-white border border-[#e9eaeb] rounded-lg px-2.5 py-1.5 hover:bg-[#f5f5f5] transition-colors" style={{ fontFamily: SFM }}>
-                          <ArrowUpRight size={12} className="shrink-0" />
-                          Follow Up
+                        <button className="flex items-center gap-1 text-[12px] text-black bg-white border border-[#e9eaeb] rounded-lg px-2.5 py-1.5 hover:bg-black hover:text-white hover:border-black transition-colors" style={{ fontFamily: SFM }}>
+                          <ArrowUpRight size={12} className="shrink-0" />Follow Up
                         </button>
                       )}
                       <button className="opacity-0 group-hover:opacity-100 transition-opacity text-[#a3a3a3] hover:text-black p-1 rounded-md hover:bg-[#f5f5f5]">
