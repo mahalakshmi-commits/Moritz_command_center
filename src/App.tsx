@@ -887,6 +887,12 @@ export default function App() {
             <button className="w-8 h-8 bg-white border border-[#e5e5e5] rounded-lg flex items-center justify-center hover:bg-neutral-50 transition-colors">
               <Bell size={13} className="text-black" />
             </button>
+            <button className="flex items-center gap-[6px] bg-[#171717] hover:bg-neutral-800 text-white rounded-[10px] px-[10px] py-[6px] transition-colors shrink-0">
+              <svg width="10.67" height="10.67" viewBox="0 0 10.6667 10.6667" fill="none">
+                <path d="M5.33333 0C5.70152 0 6 0.298477 6 0.666667V4.66667H10C10.3682 4.66667 10.6667 4.96514 10.6667 5.33333C10.6667 5.70152 10.3682 6 10 6H6V10C6 10.3682 5.70152 10.6667 5.33333 10.6667C4.96514 10.6667 4.66667 10.3682 4.66667 10V6H0.666667C0.298477 6 0 5.70152 0 5.33333C0 4.96514 0.298477 4.66667 0.666667 4.66667H4.66667V0.666667C4.66667 0.298477 4.96514 0 5.33333 0Z" fill="white" />
+              </svg>
+              <span className="text-[14px] leading-[20px] hidden sm:inline" style={{ fontFamily: `'Geist:Medium', sans-serif`, fontWeight: 500 }}>New Matter</span>
+            </button>
           </div>
         </header>
 
