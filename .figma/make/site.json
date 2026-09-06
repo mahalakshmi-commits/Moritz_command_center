@@ -1,0 +1,10 @@
+{
+  "description": "Streamline legal firm management with a comprehensive dashboard that tracks workload, financial performance, and key activities for administrators.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
